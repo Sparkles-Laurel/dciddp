@@ -8,188 +8,170 @@ info:
     of name and pronoun information in a decentralised manner, for rendering in a user interface. 
     The protocol is designed to be simple, lightweight, and easy to implement.
 
+components:
+  parameters:
+    system:
+      name: system
+      in: path
+      description: The ID of the system
+      required: true
+      schema:
+        type: string
+    member:
+      name: member
+      in: path
+      description: The ID of the member
+      required: true
+      schema:
+        type: string
+  schemas:
+    pronoun:
+      type: object
+      properties:
+        subject:
+          type: string
+          description: The subject pronoun
+        object:
+          type: string
+          description: The object pronoun
+        possessive:
+          type: string
+          description: The possessive pronoun
+        possessive_determiner:
+          type: string
+          description: The possessive determiner
+        reflexive:
+          type: string
+          description: The reflexive pronoun
+    partial-member:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the member
+        pronouns:
+          type: array
+          items:
+            $ref: "#/components/schemas/pronoun"
+    member:
+      allOf:
+      - $ref: "#/components/schemas/partial-member"
+      - type: object
+        properties:
+          id:
+            type: string
+            description: The ID of the member
+          name:
+            type: string
+            description: The name of the member
+          pronouns:
+            type: array
+            items:
+              $ref: "#/components/schemas/pronoun"
+    # might be different from member soon
+    fronter:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the fronter
+        name:
+          type: string
+          description: The name of the fronter
+        pronouns:
+          type: array
+          items:
+            $ref: "#/components/schemas/pronoun"
+    error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: The error code
+        error:
+          type: string
+          description: The error message
+    partial-system:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the system
+        name:
+          type: string
+          description: The name of the system
+    system:
+      allOf:
+        - $ref: "#/components/schemas/partial-system"
+        - type: object
+          properties:
+            pronouns:
+              type: string
+              description: The pronouns of the system
+            fronters:
+              type: array
+              description: The current fronter of the system
+              items:
+                $ref: "#/components/schemas/fronter"
+            members:
+              type: array
+              description: The members of the system
+              items:
+                $ref: "#/components/schemas/member"
+  securitySchemes:
+    bearerHttpAuthentication:
+      description: Bearer token
+      type: http
+      scheme: Bearer
+
 paths:
-  /system/{system_id}:
+  /system/{system}:
     get:
       summary: Get plural system information
       description: Retrieve information about a plural system
       parameters:
-        - name: system_id
-          in: path
-          description: The ID of the system to retrieve information about
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/system"
       responses:
         '200':
           description: Information about the system
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  system_id:
-                    type: string
-                    description: The ID of the system
-                  name:
-                    type: string
-                    description: The name of the system
-                  pronouns:
-                    type: string
-                    description: The pronouns of the system
-                  fronter:
-                    type: object
-                    description: The current fronter of the system
-                    properties:
-                      member_id:
-                        type: string
-                        description: The ID of the fronter
-                      name:
-                        type: string
-                        description: The name of the fronter
-                      pronouns:
-                        type: array
-                        description: The pronouns of the fronter
-                        items:
-                          type: object
-                          properties:
-                            subject:
-                              type: string
-                              description: The subject pronoun
-                            object:
-                              type: string
-                              description: The object pronoun
-                            possessive:
-                              type: string
-                              description: The possessive pronoun
-                            possessive_determiner:
-                              type: string
-                              description: The possessive determiner
-                            reflexive:
-                              type: string
-                              description: The reflexive pronoun
-                  members:
-                    type: array
-                    description: The members of the system
-                    items:
-                      type: object
-                      properties:
-                        member_id:
-                          type: string
-                          description: The ID of the member
-                        name:
-                          type: string
-                          description: The name of the member
-                        pronouns:
-                          type: array
-                          description: The pronouns of the member
-                          items:
-                            type: object
-                            properties:
-                              subject:
-                                type: string
-                                description: The subject pronoun
-                              object:
-                                type: string
-                                description: The object pronoun
-                              possessive:
-                                type: string
-                                description: The possessive pronoun
-                              possessive_determiner:
-                                type: string
-                                description: The possessive determiner
-                              reflexive:
-                                type: string
-                                description: The reflexive pronoun
+                $ref: "#/components/schemas/system"
         '404':
           description: System not found
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: The error message
-  /system/{system_id}/member/{member_id}:
+                $ref: "#/components/schemas/error"
+  /system/{system}/member/{member}:
     get:
       summary: Get member information
       description: Retrieve information about a member of a plural system
       parameters:
-        - name: system_id
-          in: path
-          description: The ID of the system the member belongs to
-          required: true
-          schema:
-            type: string
-        - name: member_id
-          in: path
-          description: The ID of the member to retrieve information about
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/system"
+        - $ref: "#/components/parameters/member"
       responses:
         '200':
           description: Information about the member
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  member_id:
-                    type: string
-                    description: The ID of the member
-                  name:
-                    type: string
-                    description: The name of the member
-                  pronouns:
-                    type: array
-                    description: The pronouns of the member
-                    items:
-                      type: object
-                      properties:
-                        subject:
-                          type: string
-                          description: The subject pronoun
-                        object:
-                          type: string
-                          description: The object pronoun
-                        possessive:
-                          type: string
-                          description: The possessive pronoun
-                        possessive_determiner:
-                          type: string
-                          description: The possessive determiner
-                        reflexive:
-                          type: string
-                          description: The reflexive pronoun
+                $ref: "#/components/schemas/member"
         '404':
           description: Member not found
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: The error message
-  /system/{system_id}/member/{member_id}/pronouns:
+                $ref: "#/components/schemas/error"
+  # not sure of the purpose of this route since member already returns pronouns
+  /system/{system}/member/{member}/pronouns:
     get:
       summary: Get member pronouns
       description: Retrieve pronouns of a member of a plural system
       parameters:
-        - name: system_id
-          in: path
-          description: The ID of the system the member belongs to
-          required: true
-          schema:
-            type: string
-        - name: member_id
-          in: path
-          description: The ID of the member to retrieve pronouns of
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/system"
+        - $ref: "#/components/parameters/member"
       responses:
         '200':
           description: Pronouns of the member
@@ -199,34 +181,16 @@ paths:
                 type: array
                 description: The pronouns of the member
                 items:
-                  type: object
-                  properties:
-                    subject:
-                      type: string
-                      description: The subject pronoun
-                    object:
-                      type: string
-                      description: The object pronoun
-                    possessive:
-                      type: string
-                      description: The possessive pronoun
-                    possessive_determiner:
-                      type: string
-                      description: The possessive determiner
-                    reflexive:
-                      type: string
-                      description: The reflexive pronoun
+                  $ref: "#/components/schemas/pronoun"
         '404':
           description: Member not found
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                error:
-                    type: string
-                    description: The error message   
-  /system/new:
+                $ref: "#/components/schemas/error"
+      security:
+        - bearerHttpAuthentication: []
+  /system:
     post:
       summary: Create a new plural system
       description: Create a new plural system with the specified name and pronouns
@@ -235,137 +199,82 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: The name of the system
-                pronouns:
-                  type: array
-                  description: The pronouns of the system
-                  items:
-                    type: object
-                    properties:
-                      subject:
-                        type: string
-                        description: The subject pronoun
-                      object:
-                        type: string
-                        description: The object pronoun
-                      possessive:
-                        type: string
-                        description: The possessive pronoun
-                      possessive_determiner:
-                        type: string
-                        description: The possessive determiner
-                      reflexive:
-                        type: string
-                        description: The reflexive pronoun
+              $ref: "#/components/schemas/partial-system"
       responses:
         '201':
           description: System created
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  system_id:
-                    type: string
-                    description: The ID of the system
+                $ref: "#/components/schemas/system"
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
         '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: The error message
-  /system/{system_id}/members/new:
+                $ref: "#/components/schemas/error"
+      security:
+        - bearerHttpAuthentication: []
+  
+  /system/{system}/members:
     post:
       summary: Add a new member to a plural system
       description: Add a new member to a plural system with the specified name and pronouns
       parameters:
-        - name: system_id
-          in: path
-          description: The ID of the system to add the member to
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/system"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: The name of the member
-                pronouns:
-                  type: array
-                  description: The pronouns of the member
-                  items:
-                    type: object
-                    properties:
-                      subject:
-                        type: string
-                        description: The subject pronoun
-                      object:
-                        type: string
-                        description: The object pronoun
-                      possessive:
-                        type: string
-                        description: The possessive pronoun
-                      possessive_determiner:
-                        type: string
-                        description: The possessive determiner
-                      reflexive:
-                        type: string
-                        description: The reflexive pronoun
+              $ref: "#/components/schemas/partial-member"
       responses:
         '201':
           description: Member added
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  member_id:
-                    type: string
-                    description: The ID of the member
+                $ref: "#/components/schemas/member"
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
         '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: The error message
-  /system/{system_id}/fronter:
+                $ref: "#/components/schemas/error"
+  /system/{system}/fronters:
+    # maybe put - update all, post - append, delete - remove
     put:
       summary: Set the fronter of a plural system
       description: Set the fronter of a plural system to the specified member
       parameters:
-        - name: system_id
-          in: path
-          description: The ID of the system to set the fronter of
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/system"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                member_id:
-                  type: string
-                  description: The ID of the member to set as the fronter
+              type: array
+              description: A list of member ids to set as fronters
+              items:
+                type: string
       responses:
         '200':
           description: Fronter set
@@ -374,21 +283,12 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: The error message
+                $ref: "#/components/schemas/error"
     get:
       summary: Retrieves the current fronters' API paths
       description: Retrieves the list of the current fronter(s)
       parameters:
-        - name: system_id
-          in: path
-          description: The ID of the system to retrieve the fronter(s) of
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/system"
       responses:
         '200':
           description: The current fronter(s)
@@ -397,35 +297,4 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  description: The current fronter of the system
-                  properties:
-                    member_id:
-                      type: string
-                      description: The ID of the fronter
-                    name:
-                      type: string
-                      description: The name of the fronter
-                    pronouns:
-                      type: array
-                      description: The pronouns of the fronter
-                      items:
-                        type: object
-                          properties:
-                            subject:
-                              type: string
-                              description: The subject pronoun
-                            object:
-                              type: string
-                              description: The object pronoun
-                            possessive:
-                              type: string
-                              description: The possessive pronoun
-                            possessive_determiner:
-                              type: string
-                              description: The possessive determiner
-                            reflexive:
-                              type: string
-                              description: The reflexive pronoun
-        '204':
-          description: No one in the system is fronting. This is an abnormal situation, however plural systems do experience it
+                  $ref: "#/components/schemas/fronter"
