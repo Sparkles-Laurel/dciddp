@@ -1,0 +1,349 @@
+# OpenAPI specification of the DCIDDP protocol entities
+openapi: 3.0.0
+info:
+  title: DCIDDP
+  version: 1.0.0
+  description: |
+    The Decentralised Identity Dispatch Protocol (DCIDDP) is a protocol that allows for dispension 
+    of name and pronoun information in a decentralised manner, for rendering in a user interface. 
+    The protocol is designed to be simple, lightweight, and easy to implement.
+
+paths:
+  /system/{system_id}:
+    get:
+      summary: Get plural system information
+      description: Retrieve information about a plural system
+      parameters:
+        - name: system_id
+          in: path
+          description: The ID of the system to retrieve information about
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Information about the system
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  system_id:
+                    type: string
+                    description: The ID of the system
+                  name:
+                    type: string
+                    description: The name of the system
+                  pronouns:
+                    type: string
+                    description: The pronouns of the system
+                  fronter:
+                    type: object
+                    description: The current fronter of the system
+                    properties:
+                      member_id:
+                        type: string
+                        description: The ID of the fronter
+                      name:
+                        type: string
+                        description: The name of the fronter
+                      pronouns:
+                        type: array
+                        description: The pronouns of the fronter
+                        items:
+                          type: object
+                          properties:
+                            subject:
+                              type: string
+                              description: The subject pronoun
+                            object:
+                              type: string
+                              description: The object pronoun
+                            possessive:
+                              type: string
+                              description: The possessive pronoun
+                            possessive_determiner:
+                              type: string
+                              description: The possessive determiner
+                            reflexive:
+                              type: string
+                              description: The reflexive pronoun
+                  members:
+                    type: array
+                    description: The members of the system
+                    items:
+                      type: object
+                      properties:
+                        member_id:
+                          type: string
+                          description: The ID of the member
+                        name:
+                          type: string
+                          description: The name of the member
+                        pronouns:
+                          type: array
+                          description: The pronouns of the member
+                          items:
+                            type: object
+                            properties:
+                              subject:
+                                type: string
+                                description: The subject pronoun
+                              object:
+                                type: string
+                                description: The object pronoun
+                              possessive:
+                                type: string
+                                description: The possessive pronoun
+                              possessive_determiner:
+                                type: string
+                                description: The possessive determiner
+                              reflexive:
+                                type: string
+                                description: The reflexive pronoun
+        '404':
+          description: System not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: The error message
+  /system/{system_id}/member/{member_id}:
+    get:
+      summary: Get member information
+      description: Retrieve information about a member of a plural system
+      parameters:
+        - name: system_id
+          in: path
+          description: The ID of the system the member belongs to
+          required: true
+          schema:
+            type: string
+        - name: member_id
+          in: path
+          description: The ID of the member to retrieve information about
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Information about the member
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  member_id:
+                    type: string
+                    description: The ID of the member
+                  name:
+                    type: string
+                    description: The name of the member
+                  pronouns:
+                    type: array
+                    description: The pronouns of the member
+                    items:
+                      type: object
+                      properties:
+                        subject:
+                          type: string
+                          description: The subject pronoun
+                        object:
+                          type: string
+                          description: The object pronoun
+                        possessive:
+                          type: string
+                          description: The possessive pronoun
+                        possessive_determiner:
+                          type: string
+                          description: The possessive determiner
+                        reflexive:
+                          type: string
+                          description: The reflexive pronoun
+        '404':
+          description: Member not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: The error message
+  /system/{system_id}/member/{member_id}/pronouns:
+    get:
+      summary: Get member pronouns
+      description: Retrieve pronouns of a member of a plural system
+      parameters:
+        - name: system_id
+          in: path
+          description: The ID of the system the member belongs to
+          required: true
+          schema:
+            type: string
+        - name: member_id
+          in: path
+          description: The ID of the member to retrieve pronouns of
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pronouns of the member
+          content:
+            application/json:
+              schema:
+                type: array
+                description: The pronouns of the member
+                items:
+                  type: object
+                  properties:
+                    subject:
+                      type: string
+                      description: The subject pronoun
+                    object:
+                      type: string
+                      description: The object pronoun
+                    possessive:
+                      type: string
+                      description: The possessive pronoun
+                    possessive_determiner:
+                      type: string
+                      description: The possessive determiner
+                    reflexive:
+                      type: string
+                      description: The reflexive pronoun
+          '404':
+            description: Member not found
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                  error:
+                      type: string
+                      description: The error message
+      
+  /system/new:
+    post:
+      summary: Create a new plural system
+      description: Create a new plural system with the specified name and pronouns
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the system
+                pronouns:
+                  type: array
+                  description: The pronouns of the system
+                  items:
+                    type: object
+                    properties:
+                      subject:
+                        type: string
+                        description: The subject pronoun
+                      object:
+                        type: string
+                        description: The object pronoun
+                      possessive:
+                        type: string
+                        description: The possessive pronoun
+                      possessive_determiner:
+                        type: string
+                        description: The possessive determiner
+                      reflexive:
+                        type: string
+                        description: The reflexive pronoun
+      responses:
+        '201':
+          description: System created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  system_id:
+                    type: string
+                    description: The ID of the system
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: The error message
+  /system/{system_id}/members/new:
+    post:
+      summary: Add a new member to a plural system
+      description: Add a new member to a plural system with the specified name and pronouns
+      parameters:
+        - name: system_id
+          in: path
+          description: The ID of the system to add the member to
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the member
+                pronouns:
+                  type: array
+                  description: The pronouns of the member
+                  items:
+                    type: object
+                    properties:
+                      subject:
+                        type: string
+                        description: The subject pronoun
+                      object:
+                        type: string
+                        description: The object pronoun
+                      possessive:
+                        type: string
+                        description: The possessive pronoun
+                      possessive_determiner:
+                        type: string
+                        description: The possessive determiner
+                      reflexive:
+                        type: string
+                        description: The reflexive pronoun
+      responses:
+        '201':
+          description: Member added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  member_id:
+                    type: string
+                    description: The ID of the member
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: The error message
+ 
