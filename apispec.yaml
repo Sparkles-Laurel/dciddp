@@ -216,17 +216,16 @@ paths:
                     reflexive:
                       type: string
                       description: The reflexive pronoun
-          '404':
-            description: Member not found
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                  error:
-                      type: string
-                      description: The error message
-      
+        '404':
+          description: Member not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                error:
+                    type: string
+                    description: The error message   
   /system/new:
     post:
       summary: Create a new plural system
@@ -346,4 +345,87 @@ paths:
                   error:
                     type: string
                     description: The error message
- 
+  /system/{system_id}/fronter:
+    put:
+      summary: Set the fronter of a plural system
+      description: Set the fronter of a plural system to the specified member
+      parameters:
+        - name: system_id
+          in: path
+          description: The ID of the system to set the fronter of
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                member_id:
+                  type: string
+                  description: The ID of the member to set as the fronter
+      responses:
+        '200':
+          description: Fronter set
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: The error message
+    get:
+      summary: Retrieves the current fronters' API paths
+      description: Retrieves the list of the current fronter(s)
+      parameters:
+        - name: system_id
+          in: path
+          description: The ID of the system to retrieve the fronter(s) of
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The current fronter(s)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The current fronter of the system
+                  properties:
+                    member_id:
+                      type: string
+                      description: The ID of the fronter
+                    name:
+                      type: string
+                      description: The name of the fronter
+                    pronouns:
+                      type: array
+                      description: The pronouns of the fronter
+                      items:
+                        type: object
+                          properties:
+                            subject:
+                              type: string
+                              description: The subject pronoun
+                            object:
+                              type: string
+                              description: The object pronoun
+                            possessive:
+                              type: string
+                              description: The possessive pronoun
+                            possessive_determiner:
+                              type: string
+                              description: The possessive determiner
+                            reflexive:
+                              type: string
+                              description: The reflexive pronoun
+        '204':
+          description: No one in the system is fronting. This is an abnormal situation, however plural systems do experience it
