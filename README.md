@@ -26,11 +26,8 @@ The Protocol can function over HTTP, HTTPS, or any other protocol that supports 
 `Member` objects represent individual members of a system and contain the following fields:
 
 - `id` (string): A unique identifier for the member.
-- `names` (array of string): The names of the member.
+- `name` (string): The name of the member.
 - `pronouns` (array of `Pronoun` objects): The pronouns of the member.
-- `description` (string): A description of the member.
-- `additionalInfo` (object): Additional information about the member. This can be any JSON object.
-
 
 #### Pronoun
 
@@ -79,8 +76,6 @@ The following endpoints are also required, but they require authentication:
 
 - `POST /member/<systemName>/new`: This endpoint must use a member object to register a new member with the server.
 
-## Retrieval of Remote Members
 
-Just like Fediverse, DCIDPP uses the format `@systemname@homeserver` to refer to a system registered on a different server. And remote members on remote systems are denoted as `@membername@systemname@homeserver`.
 
 

@@ -1,0 +1,451 @@
+openapi: 3.0.0
+info:
+  description: "The Decentralised Identity Dispatch Protocol (DCIDDP) is a protocol\
+    \ that allows for dispension \nof name and pronoun information in a decentralised\
+    \ manner, for rendering in a user interface. \nThe protocol is designed to be\
+    \ simple, lightweight, and easy to implement.\n"
+  title: DCIDDP
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /system/{system}:
+    get:
+      description: Retrieve information about a plural system
+      parameters:
+      - description: The ID of the system
+        explode: false
+        in: path
+        name: system
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/system'
+          description: Information about the system
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: System not found
+      summary: Get plural system information
+  /system/{system}/member/{member}:
+    get:
+      description: Retrieve information about a member of a plural system
+      parameters:
+      - description: The ID of the system
+        explode: false
+        in: path
+        name: system
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The ID of the member
+        explode: false
+        in: path
+        name: member
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/member'
+          description: Information about the member
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Member not found
+      summary: Get member information
+  /system/{system}/member/{member}/pronouns:
+    get:
+      description: Retrieve pronouns of a member of a plural system
+      parameters:
+      - description: The ID of the system
+        explode: false
+        in: path
+        name: system
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The ID of the member
+        explode: false
+        in: path
+        name: member
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                description: The pronouns of the member
+                items:
+                  $ref: '#/components/schemas/pronoun'
+                type: array
+          description: Pronouns of the member
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Member not found
+      security:
+      - bearerHttpAuthentication: []
+      summary: Get member pronouns
+  /system:
+    post:
+      description: Create a new plural system with the specified name and pronouns
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/partial-system'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/system'
+          description: System created
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Unauthorized request
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid request
+      security:
+      - bearerHttpAuthentication: []
+      summary: Create a new plural system
+  /system/{system}/members:
+    post:
+      description: Add a new member to a plural system with the specified name and
+        pronouns
+      parameters:
+      - description: The ID of the system
+        explode: false
+        in: path
+        name: system
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/partial-member'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/member'
+          description: Member added
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Unauthorized request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Forbidden
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid request
+      summary: Add a new member to a plural system
+  /system/{system}/fronters:
+    get:
+      description: Retrieves the list of the current fronter(s)
+      parameters:
+      - description: The ID of the system
+        explode: false
+        in: path
+        name: system
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/fronter'
+                type: array
+          description: The current fronter(s)
+      summary: Retrieves the current fronters' API paths
+    put:
+      description: Set the fronter of a plural system to the specified member
+      parameters:
+      - description: The ID of the system
+        explode: false
+        in: path
+        name: system
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: A list of member ids to set as fronters
+              items:
+                type: string
+              type: array
+        required: true
+      responses:
+        "200":
+          description: Fronter set
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid request
+      summary: Set the fronter of a plural system
+components:
+  parameters:
+    system:
+      description: The ID of the system
+      explode: false
+      in: path
+      name: system
+      required: true
+      schema:
+        type: string
+      style: simple
+    member:
+      description: The ID of the member
+      explode: false
+      in: path
+      name: member
+      required: true
+      schema:
+        type: string
+      style: simple
+  schemas:
+    pronoun:
+      example:
+        possessive_determiner: possessive_determiner
+        reflexive: reflexive
+        subject: subject
+        possessive: possessive
+        object: object
+      properties:
+        subject:
+          description: The subject pronoun
+          type: string
+        object:
+          description: The object pronoun
+          type: string
+        possessive:
+          description: The possessive pronoun
+          type: string
+        possessive_determiner:
+          description: The possessive determiner
+          type: string
+        reflexive:
+          description: The reflexive pronoun
+          type: string
+      type: object
+    partial-member:
+      properties:
+        name:
+          description: The name of the member
+          type: string
+        pronouns:
+          items:
+            $ref: '#/components/schemas/pronoun'
+          type: array
+      type: object
+    member:
+      allOf:
+      - $ref: '#/components/schemas/partial-member'
+      - properties:
+          id:
+            description: The ID of the member
+            type: string
+          name:
+            description: The name of the member
+            type: string
+          pronouns:
+            items:
+              $ref: '#/components/schemas/pronoun'
+            type: array
+        type: object
+      example:
+        name: name
+        pronouns:
+        - possessive_determiner: possessive_determiner
+          reflexive: reflexive
+          subject: subject
+          possessive: possessive
+          object: object
+        - possessive_determiner: possessive_determiner
+          reflexive: reflexive
+          subject: subject
+          possessive: possessive
+          object: object
+        id: id
+    fronter:
+      example:
+        name: name
+        pronouns:
+        - possessive_determiner: possessive_determiner
+          reflexive: reflexive
+          subject: subject
+          possessive: possessive
+          object: object
+        - possessive_determiner: possessive_determiner
+          reflexive: reflexive
+          subject: subject
+          possessive: possessive
+          object: object
+        id: id
+      properties:
+        id:
+          description: The ID of the fronter
+          type: string
+        name:
+          description: The name of the fronter
+          type: string
+        pronouns:
+          items:
+            $ref: '#/components/schemas/pronoun'
+          type: array
+      type: object
+    error:
+      example:
+        code: 0
+        error: error
+      properties:
+        code:
+          description: The error code
+          type: integer
+        error:
+          description: The error message
+          type: string
+      type: object
+    partial-system:
+      properties:
+        id:
+          description: The ID of the system
+          type: string
+        name:
+          description: The name of the system
+          type: string
+      type: object
+    system:
+      allOf:
+      - $ref: '#/components/schemas/partial-system'
+      - properties:
+          pronouns:
+            description: The pronouns of the system
+            type: string
+          fronters:
+            description: The current fronter of the system
+            items:
+              $ref: '#/components/schemas/fronter'
+            type: array
+          members:
+            description: The members of the system
+            items:
+              $ref: '#/components/schemas/member'
+            type: array
+        type: object
+      example:
+        fronters:
+        - name: name
+          pronouns:
+          - possessive_determiner: possessive_determiner
+            reflexive: reflexive
+            subject: subject
+            possessive: possessive
+            object: object
+          - possessive_determiner: possessive_determiner
+            reflexive: reflexive
+            subject: subject
+            possessive: possessive
+            object: object
+          id: id
+        - name: name
+          pronouns:
+          - possessive_determiner: possessive_determiner
+            reflexive: reflexive
+            subject: subject
+            possessive: possessive
+            object: object
+          - possessive_determiner: possessive_determiner
+            reflexive: reflexive
+            subject: subject
+            possessive: possessive
+            object: object
+          id: id
+        members:
+        - name: name
+          pronouns:
+          - possessive_determiner: possessive_determiner
+            reflexive: reflexive
+            subject: subject
+            possessive: possessive
+            object: object
+          - possessive_determiner: possessive_determiner
+            reflexive: reflexive
+            subject: subject
+            possessive: possessive
+            object: object
+          id: id
+        - name: name
+          pronouns:
+          - possessive_determiner: possessive_determiner
+            reflexive: reflexive
+            subject: subject
+            possessive: possessive
+            object: object
+          - possessive_determiner: possessive_determiner
+            reflexive: reflexive
+            subject: subject
+            possessive: possessive
+            object: object
+          id: id
+        name: name
+        pronouns: pronouns
+        id: id
+  securitySchemes:
+    bearerHttpAuthentication:
+      description: Bearer token
+      scheme: Bearer
+      type: http
