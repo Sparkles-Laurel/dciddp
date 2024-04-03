@@ -1,0 +1,10 @@
+.openapi-generator-ignore
+Model/Error.sql
+Model/Fronter.sql
+Model/Member.sql
+Model/PartialMember.sql
+Model/PartialSystem.sql
+Model/Pronoun.sql
+Model/System.sql
+README.md
+mysql_schema.sql

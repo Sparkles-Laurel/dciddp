@@ -1,0 +1,10 @@
+.openapi-generator-ignore
+Apis/DefaultApi.md
+Models/error.md
+Models/fronter.md
+Models/member.md
+Models/partial-member.md
+Models/partial-system.md
+Models/pronoun.md
+Models/system.md
+README.md
