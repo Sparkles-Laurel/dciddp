@@ -9,43 +9,9 @@ info:
 servers:
 - url: /
 paths:
-  /system:
-    post:
-      description: Create a new plural system with the specified name and pronouns
-      operationId: system_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/partial-system'
-        required: true
-      responses:
-        "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/system'
-          description: System created
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
-          description: Unauthorized request
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
-          description: Invalid request
-      security:
-      - bearerHttpAuthentication: []
-      summary: Create a new plural system
-      x-openapi-router-controller: openapi_server.controllers.default_controller
   /system/{system}:
     get:
       description: Retrieve information about a plural system
-      operationId: system_system_get
       parameters:
       - description: The ID of the system
         explode: false
@@ -69,67 +35,9 @@ paths:
                 $ref: '#/components/schemas/error'
           description: System not found
       summary: Get plural system information
-      x-openapi-router-controller: openapi_server.controllers.default_controller
-  /system/{system}/fronters:
-    get:
-      description: Retrieves the list of the current fronter(s)
-      operationId: system_system_fronters_get
-      parameters:
-      - description: The ID of the system
-        explode: false
-        in: path
-        name: system
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/fronter'
-                type: array
-          description: The current fronter(s)
-      summary: Retrieves the current fronters' API paths
-      x-openapi-router-controller: openapi_server.controllers.default_controller
-    put:
-      description: Set the fronter of a plural system to the specified member
-      operationId: system_system_fronters_put
-      parameters:
-      - description: The ID of the system
-        explode: false
-        in: path
-        name: system
-        required: true
-        schema:
-          type: string
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: A list of member ids to set as fronters
-              items:
-                type: string
-              type: array
-        required: true
-      responses:
-        "200":
-          description: Fronter set
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
-          description: Invalid request
-      summary: Set the fronter of a plural system
-      x-openapi-router-controller: openapi_server.controllers.default_controller
   /system/{system}/member/{member}:
     get:
       description: Retrieve information about a member of a plural system
-      operationId: system_system_member_member_get
       parameters:
       - description: The ID of the system
         explode: false
@@ -161,11 +69,9 @@ paths:
                 $ref: '#/components/schemas/error'
           description: Member not found
       summary: Get member information
-      x-openapi-router-controller: openapi_server.controllers.default_controller
   /system/{system}/member/{member}/pronouns:
     get:
       description: Retrieve pronouns of a member of a plural system
-      operationId: system_system_member_member_pronouns_get
       parameters:
       - description: The ID of the system
         explode: false
@@ -202,12 +108,41 @@ paths:
       security:
       - bearerHttpAuthentication: []
       summary: Get member pronouns
-      x-openapi-router-controller: openapi_server.controllers.default_controller
+  /system:
+    post:
+      description: Create a new plural system with the specified name and pronouns
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/partial-system'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/system'
+          description: System created
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Unauthorized request
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid request
+      security:
+      - bearerHttpAuthentication: []
+      summary: Create a new plural system
   /system/{system}/members:
     post:
       description: Add a new member to a plural system with the specified name and
         pronouns
-      operationId: system_system_members_post
       parameters:
       - description: The ID of the system
         explode: false
@@ -249,7 +184,58 @@ paths:
                 $ref: '#/components/schemas/error'
           description: Invalid request
       summary: Add a new member to a plural system
-      x-openapi-router-controller: openapi_server.controllers.default_controller
+  /system/{system}/fronters:
+    get:
+      description: Retrieves the list of the current fronter(s)
+      parameters:
+      - description: The ID of the system
+        explode: false
+        in: path
+        name: system
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/fronter'
+                type: array
+          description: The current fronter(s)
+      summary: Retrieves the current fronters' API paths
+    put:
+      description: Set the fronter of a plural system to the specified member
+      parameters:
+      - description: The ID of the system
+        explode: false
+        in: path
+        name: system
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: A list of member ids to set as fronters
+              items:
+                type: string
+              type: array
+        required: true
+      responses:
+        "200":
+          description: Fronter set
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid request
+      summary: Set the fronter of a plural system
 components:
   parameters:
     system:
@@ -281,38 +267,29 @@ components:
       properties:
         subject:
           description: The subject pronoun
-          title: subject
           type: string
         object:
           description: The object pronoun
-          title: object
           type: string
         possessive:
           description: The possessive pronoun
-          title: possessive
           type: string
         possessive_determiner:
           description: The possessive determiner
-          title: possessive_determiner
           type: string
         reflexive:
           description: The reflexive pronoun
-          title: reflexive
           type: string
-      title: pronoun
       type: object
     partial-member:
       properties:
         name:
           description: The name of the member
-          title: name
           type: string
         pronouns:
           items:
             $ref: '#/components/schemas/pronoun'
-          title: pronouns
           type: array
-      title: partial-member
       type: object
     member:
       allOf:
@@ -343,7 +320,6 @@ components:
           possessive: possessive
           object: object
         id: id
-      title: member
     fronter:
       example:
         name: name
@@ -362,18 +338,14 @@ components:
       properties:
         id:
           description: The ID of the fronter
-          title: id
           type: string
         name:
           description: The name of the fronter
-          title: name
           type: string
         pronouns:
           items:
             $ref: '#/components/schemas/pronoun'
-          title: pronouns
           type: array
-      title: fronter
       type: object
     error:
       example:
@@ -382,25 +354,19 @@ components:
       properties:
         code:
           description: The error code
-          title: code
           type: integer
         error:
           description: The error message
-          title: error
           type: string
-      title: error
       type: object
     partial-system:
       properties:
         id:
           description: The ID of the system
-          title: id
           type: string
         name:
           description: The name of the system
-          title: name
           type: string
-      title: partial-system
       type: object
     system:
       allOf:
@@ -478,7 +444,6 @@ components:
         name: name
         pronouns: pronouns
         id: id
-      title: system
   securitySchemes:
     bearerHttpAuthentication:
       description: Bearer token
