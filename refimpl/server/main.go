@@ -15,7 +15,7 @@ import (
 	// WARNING!
 	// Pass --git-repo-id and --git-user-id properties when generating the code
 	//
-	sw "git.gay/SparkySimp/dciddpd"
+	sw "git.gay/SparkySimp/dciddpd/go"
 )
 
 func main() {
