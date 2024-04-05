@@ -20,7 +20,19 @@ type DefaultAPI struct {
 // Create a new plural system
 func (api *DefaultAPI) CreateSystem(c *gin.Context) {
 	// Your handler implementation
-	c.JSON(200, gin.H{"status": "OK"})
+	var newPSystem PartialSystem
+	if err := c.ShouldBindJSON(newPSystem); err != nil {
+		c.JSON(500, gin.H{"code": 4, "msg": "failed to parse body"})
+	}
+	// create an empty plural system
+	var newSystem System
+	newSystem.Fronters = make([]Fronter, 0)
+	newSystem.Members = make([]Member, 0)
+	newSystem.Name = newPSystem.Name
+	newSystem.Id = newPSystem.Id
+	newSystem.Pronouns = ""
+
+	c.JSON(201, newSystem)
 }
 
 // Get /system/:system/fronters
